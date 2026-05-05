@@ -4,6 +4,13 @@ import 'package:http/http.dart' as http;
 
 const testImage = 'test-img';
 
+// storage which is temporarily stored in memory, which can be replaced
+// by SharedPreferences, SQLite, or other persistence mechanism.
+//
+// The class is a singleton, and the instance is available through the
+// factory constructor.
+//
+// setter and getter use 'domain' as key, 'time' as value, simpify the usage.
 class DomainTester {
   DomainTester._internal();
 
@@ -11,7 +18,7 @@ class DomainTester {
 
   factory DomainTester() => _instance;
 
-  String result = '[]';
+  String _storage = '[]';
 
   Future<double> downloadImg(String domain) async {
     final stopwatch = Stopwatch()..start();
@@ -23,15 +30,17 @@ class DomainTester {
   void set(Map<String, double> domainTimes) {
     final invertedMap = domainTimes.map((k, v) => MapEntry(v, k));
     final sortedMap = SplayTreeMap<double, String>()..addAll(invertedMap);
-    result = jsonEncode(
+    _storage = jsonEncode(
       sortedMap.entries.map((e) => {'domain': e.value, 'time': e.key}).toList(),
     );
   }
 
-  List<Map<String, double>> get() {
-    final data = jsonDecode(result) as List;
-    return data
-        .map((e) => {e['domain'] as String: e['time'] as double})
-        .toList();
+  Map<String, double> get() {
+    final data = jsonDecode(_storage) as List;
+    final result = <String, double>{};
+    for (final e in data) {
+      result[e['domain'] as String] = e['time'] as double;
+    }
+    return result;
   }
 }

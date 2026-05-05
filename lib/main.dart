@@ -30,7 +30,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  var results = <Map<String, double>>[];
+  var results = <String, double>{};
 
   Future<void> _test() async {
     var domainTimes = <String, double>{};
@@ -64,10 +64,10 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: .center,
           children: [
-            for (var item in results)
+            for (final item in results.entries)
               Row(
                 mainAxisAlignment: .center,
-                children: [Text('${item.keys.first}: ${item.values.first}')],
+                children: [Text('${item.key}: ${item.value}')],
               ),
           ],
         ),
